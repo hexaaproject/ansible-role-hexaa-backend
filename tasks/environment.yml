@@ -1,0 +1,15 @@
+---
+- name: Ensure Pip is installed.
+  package:
+    name: python3-pip
+    state: present
+  become: true
+
+- name: install pip docker
+  pip:
+    name: docker
+
+- name: install pip docker-compose
+  pip:
+    name: docker-compose
+

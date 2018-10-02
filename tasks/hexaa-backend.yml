@@ -1,0 +1,32 @@
+---
+#- name: stop services
+#  docker_service:
+#    project_src: hexaa-backend
+#    state: absent
+
+- name: start services
+  docker_service:
+    project_name: hexaa-backend
+    definition:
+      version: '3'
+      services:
+        hexaa-backend:
+          image: hexaaproject/hexaa-backend:for-dev
+          ports:
+            - "81:80"
+          links:
+            - memcached
+        memcached:
+          image: memcached
+  register: output
+
+- debug:
+    var: output
+
+- debug:
+    var: hexaa-backend
+
+#- assert:
+#    that:
+#      - "hexaa-backend.hexaa-backend_hexaa-backend_1.state.running"
+#      - "memcached.hexaa-backend_memcached_1.state.running"
