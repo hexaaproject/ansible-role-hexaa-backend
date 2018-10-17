@@ -13,3 +13,6 @@
   pip:
     name: docker-compose
 
+- name: Config volume exists
+  file:
+    path: "{{ hexaa_backend_host_volume }}/config"

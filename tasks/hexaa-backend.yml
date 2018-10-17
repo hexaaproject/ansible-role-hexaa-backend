@@ -1,32 +1,30 @@
 ---
-#- name: stop services
-#  docker_service:
-#    project_src: hexaa-backend
-#    state: absent
+- name: Ensure network exists
+  docker_network:
+    name: "{{ docker_network_name }}"
+    state: present
 
-- name: start services
-  docker_service:
-    project_name: hexaa-backend
-    definition:
-      version: '3'
-      services:
-        hexaa-backend:
-          image: hexaaproject/hexaa-backend:for-dev
-          ports:
-            - "81:80"
-          links:
-            - memcached
-        memcached:
-          image: memcached
-  register: output
+- name: start memcached
+  docker_container:
+    name: memcached
+    image: "memcached"
+    networks:
+      - name: "{{ docker_network_name }}"
 
-- debug:
-    var: output
+- name: stop hexaa-backend
+  docker_container:
+    name: hexaa-backend
+    state: absent
 
-- debug:
-    var: hexaa-backend
-
-#- assert:
-#    that:
-#      - "hexaa-backend.hexaa-backend_hexaa-backend_1.state.running"
-#      - "memcached.hexaa-backend_memcached_1.state.running"
+- name: start hexaa-backend
+  docker_container:
+    name: hexaa-backend
+    image: hexaaproject/hexaa-backend:for-dev-env-variables
+    # TODO command, csak hogy ne szálljon el
+    command: "tail -f /dev/null"
+    ports:
+      - "81:80"
+    networks:
+      - name: "{{ docker_network_name }}"
+    volumes:
+      - {{ hexaa_backend_host_volume }}/config/paramteres.yml:/var/www/TODO
