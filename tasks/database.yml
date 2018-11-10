@@ -1,0 +1,22 @@
+---
+- name: Ensure network exists
+  docker_network:
+    name: "{{ docker_network_name }}"
+    state: present
+
+- name: stop db container
+  docker_container:
+    name: "{{ HEXAA_BACKEND_DATABASE.host }}"
+    state: absent
+
+- name: Create db container and connect to network
+  docker_container:
+    name: "{{ HEXAA_BACKEND_DATABASE.host }}"
+    image: "mariadb:latest"
+    networks:
+      - name: "{{ docker_network_name }}"
+    env:
+      MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
+      MYSQL_DATABASE: "{{ HEXAA_BACKEND_DATABASE.name }}"
+      MYSQL_USER: "{{ HEXAA_BACKEND_DATABASE.user }}"
+      MYSQL_PASSWORD: "{{ HEXAA_BACKEND_DATABASE.password }}"

@@ -2,6 +2,9 @@
 - name: include environment
   include: environment.yml
 
+- name: include database
+  include: database.yml
+
 - name: include hexaa-backend
   include: hexaa-backend.yml
 
