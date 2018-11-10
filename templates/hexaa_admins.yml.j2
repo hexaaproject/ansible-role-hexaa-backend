@@ -1,0 +1,6 @@
+parameters:
+    # Array of HEXAA superadmins (fedid)
+    hexaa_admins:
+        {% for admin in HEXAA_ADMINS -%}
+            - {{ admin }}
+        {% endfor %}

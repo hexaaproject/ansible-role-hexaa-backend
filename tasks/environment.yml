@@ -1,4 +1,5 @@
 ---
+
 - name: Ensure Pip is installed.
   package:
     name: python3-pip
@@ -13,6 +14,72 @@
   pip:
     name: docker-compose
 
-- name: Config volume exists
+
+# generate keys if they are not set
+# TODO: is this OK? could this be done in a simpler way?
+# TODO: what is the function of SSP key, is it needed?
+- name: generate default master key
+  when: HEXAA_BACKEND_MASTERKEY.defaultMasterKey == ""
+  shell: "tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=40 count=1 2>/dev/null;echo"
+  register: DEFAULT_KEY
+- name: store default master key
+  when: HEXAA_BACKEND_MASTERKEY.defaultMasterKey == ""
+  set_fact:
+      HEXAA_BACKEND_MASTERKEY: "{{ HEXAA_BACKEND_MASTERKEY | combine({'defaultMasterKey': DEFAULT_KEY.stdout}) }}"
+
+- name: generate ssp master key
+  when: HEXAA_BACKEND_MASTERKEY.SSP == ""
+  shell: "tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=40 count=1 2>/dev/null;echo"
+  register: SSP_KEY
+- name: store ssp master key
+  when: HEXAA_BACKEND_MASTERKEY.SSP == ""
+  set_fact:
+      HEXAA_BACKEND_MASTERKEY: "{{ HEXAA_BACKEND_MASTERKEY | combine({'SSP': SSP_KEY.stdout}) }}"
+
+- name: generate secret
+  when: HEXAA_BACKEND_SECRET == ""
+  shell: "tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=32 count=1 2>/dev/null;echo"
+  register: SECRET
+- name: store secret
+  when: HEXAA_BACKEND_SECRET == ""
+  set_fact:
+      HEXAA_BACKEND_SECRET: "{{ SECRET.stdout }}"
+
+
+- name: create config directory
+  tempfile:
+    state: directory
+  register: config_dir
+- name: create parameters.yml from template
+  template:
+    src: parameters.yml.j2
+    dest: "{{ config_dir.path }}/parameters.yml"
+- name: create hexaa_admins.yml from template
+  template:
+    src: hexaa_admins.yml.j2
+    dest: "{{ config_dir.path }}/hexaa_admins.yml"
+- name: copy default entity ID config
+  copy:
+    src: files/hexaa_entityids_dist.yml
+    dest: "{{ config_dir.path }}/hexaa_entityids.yml"
+- name: set config dir permissions
   file:
-    path: "{{ hexaa_backend_host_volume }}/config"
+    path: "{{ config_dir.path }}"
+    mode: 0755
+
+
+- name: create nginx config
+  tags: [web]
+  tempfile:
+    state: file
+  register: nginx_conf
+- name: write nginx config
+  tags: [web]
+  copy:
+    dest: "{{ nginx_conf.path }}"
+    src: files/nginx.conf
+- name: set nginx config permissions
+  tags: [web]
+  file:
+    path: "{{ nginx_conf.path }}"
+    mode: 0644

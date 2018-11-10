@@ -20,11 +20,34 @@
   docker_container:
     name: hexaa-backend
     image: hexaaproject/hexaa-backend:for-dev-env-variables
-    # TODO command, csak hogy ne szálljon el
-    command: "tail -f /dev/null"
+    networks:
+      - name: "{{ docker_network_name }}"
+    volumes:
+      - "{{ config_dir.path }}:/opt/hexaa-backend/app/config/site:ro"
+      # export for the web container
+      - /opt/hexaa-backend/web
+    env:
+      HEXAA_BACKEND_DATABASE_HOST: "{{ HEXAA_BACKEND_DATABASE.host }}"
+      HEXAA_BACKEND_DATABASE_PORT: "{{ HEXAA_BACKEND_DATABASE.port }}"
+
+
+- name: stop hexaa-backend-web
+  tags: [web]
+  docker_container:
+    name: hexaa-backend-web
+    state: absent
+
+- name: start hexaa-backend-web
+  tags: [web]
+  docker_container:
+    name: hexaa-backend-web
+    image: nginx
+    #auto_remove: yes
     ports:
       - "81:80"
     networks:
       - name: "{{ docker_network_name }}"
+    volumes_from:
+      - hexaa-backend
     volumes:
-      - {{ hexaa_backend_host_volume }}/config/paramteres.yml:/var/www/TODO
+      - "{{ nginx_conf.path }}:/etc/nginx/conf.d/default.conf:ro"
