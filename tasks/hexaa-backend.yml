@@ -27,8 +27,8 @@
       # export for the web container
       - /opt/hexaa-backend/web
     env:
-      HEXAA_BACKEND_DATABASE_HOST: "{{ HEXAA_BACKEND_DATABASE.host }}"
-      HEXAA_BACKEND_DATABASE_PORT: "{{ HEXAA_BACKEND_DATABASE.port }}"
+      HEXAA_BACKEND_DATABASE_HOST: "{{ HEXAA_BACKEND_DATABASE_HOST }}"
+      HEXAA_BACKEND_DATABASE_PORT: "{{ HEXAA_BACKEND_DATABASE_PORT }}"
 
 
 - name: stop hexaa-backend-web
