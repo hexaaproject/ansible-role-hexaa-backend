@@ -11,6 +11,19 @@
     networks:
       - name: "{{ docker_network_name }}"
 
+
+- name: start entity id list generator container
+  docker_container:
+    name: hexaa-service-entityids-generator
+    image: hexaaproject/hexaa-service-entityids-generator
+    volumes:
+      - "{{ config_dir.path }}/hexaa_entityids.yml:/tmp/hexaa_entityids.yml"
+    env:
+      METADATA_SOURCE_URLS: "{{ HEXAA_BACKEND_METADATA_SOURCE_URLS }}"
+      TARGET_FILE_PATH: /tmp/hexaa_entityids.yml
+      UPDATE_INTERVAL_MINUTES: 60
+  when: (HEXAA_BACKEND_METADATA_SOURCE_URLS != "" and HEXAA_BACKEND_METADATA_SOURCE_URLS is not none)
+
 - name: stop hexaa-backend
   docker_container:
     name: hexaa-backend
