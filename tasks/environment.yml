@@ -17,7 +17,6 @@
 
 # generate keys if they are not set
 # TODO: is this OK? could this be done in a simpler way?
-# TODO: what is the function of SSP key, is it needed?
 - name: generate default master key
   when: HEXAA_BACKEND_MASTERKEY.defaultMasterKey == ""
   shell: "tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=40 count=1 2>/dev/null;echo"
@@ -27,14 +26,6 @@
   set_fact:
       HEXAA_BACKEND_MASTERKEY: "{{ HEXAA_BACKEND_MASTERKEY | combine({'defaultMasterKey': DEFAULT_KEY.stdout}) }}"
 
-- name: generate ssp master key
-  when: HEXAA_BACKEND_MASTERKEY.SSP == ""
-  shell: "tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=40 count=1 2>/dev/null;echo"
-  register: SSP_KEY
-- name: store ssp master key
-  when: HEXAA_BACKEND_MASTERKEY.SSP == ""
-  set_fact:
-      HEXAA_BACKEND_MASTERKEY: "{{ HEXAA_BACKEND_MASTERKEY | combine({'SSP': SSP_KEY.stdout}) }}"
 
 - name: generate secret
   when: HEXAA_BACKEND_SECRET == ""
