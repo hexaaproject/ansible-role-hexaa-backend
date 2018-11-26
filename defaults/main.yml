@@ -56,7 +56,7 @@ HEXAA_BACKEND_ADMINS:
 HEXAA_BACKEND_SECRET: ""
 
 # avoid trailing slash
-HEXAA_FRONTEND_URI: https://url.of/hexaaui
+HEXAA_FRONTEND_URL: https://url.of/hexaaui
 
 # More origin strings may be provided with the HEXAA_BACKEND_CORS_ORIGIN_ prefix.
 HEXAA_BACKEND_CORS_ORIGIN_DEFAULT: nullstring
