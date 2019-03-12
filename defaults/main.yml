@@ -73,3 +73,22 @@ HEXAA_BACKEND_PUBLIC_ATTRIBUTE_SPECIFICATION_ENABLED: true
 HEXAA_BACKEND_FROM_ADDRESS: hexaa@example.com
 
 HEXAA_BACKEND_AUTH_COOKIE_NAME: hexaa_auth
+
+
+
+#  SimpleSAMLphp AA config
+# =========================
+SSP_ENTITY_ID: https://staging.hexaa.eu/aa
+
+SSP_ORG_NAME: ORG
+SSP_ORG_DISPLAY_NAME: ORG
+SSP_ORG_URL: org.url
+
+SSP_SECRET_SALT: --------REPLACE-THIS------------
+
+SSP_ADMIN_PASSWD: ~
+
+# Path on host to dir with `aa.server.key.pem` and `aa.server.cert.pem` in it
+# generating:
+# openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem
+SSP_CERT_PATH: /opt/simplesamlphp/cert
