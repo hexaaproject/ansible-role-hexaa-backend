@@ -62,7 +62,7 @@
     networks:
       - name: "{{ docker_network_name_backend }}"
     volumes:
-      - "{{ ssp_config_dir.path }}/config.php:/simplesamlphp-config.php:/opt/simplesamlphp/config/config.php:ro"
+      - "{{ ssp_config_dir.path }}/config.php:/opt/simplesamlphp/config/config.php:ro"
       - "{{ ssp_config_dir.path }}/attributeauthority-hosted.php:/opt/simplesamlphp/metadata/attributeauthority-hosted.php:ro"
       - "{{ SSP_CERT_PATH }}:/opt/simplesamlphp/cert:ro"
       - /opt/simplesamlphp/www
