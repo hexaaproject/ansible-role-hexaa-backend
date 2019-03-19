@@ -1,7 +1,7 @@
 ---
 - name: Ensure network exists
   docker_network:
-    name: "{{ docker_network_name }}"
+    name: "{{ docker_network_name_backend }}"
     state: present
 
 - name: start memcached
@@ -9,7 +9,7 @@
     name: memcached
     image: "memcached"
     networks:
-      - name: "{{ docker_network_name }}"
+      - name: "{{ docker_network_name_backend }}"
 
 
 - name: start entity id list generator container
@@ -21,7 +21,7 @@
     env:
       METADATA_SOURCE_URLS: "{{ HEXAA_BACKEND_METADATA_SOURCE_URLS }}"
       TARGET_FILE_PATH: /tmp/hexaa_entityids.yml
-      UPDATE_INTERVAL_MINUTES: 60
+      UPDATE_INTERVAL_MINUTES: "60"
   when: (HEXAA_BACKEND_METADATA_SOURCE_URLS != "" and HEXAA_BACKEND_METADATA_SOURCE_URLS is not none)
 
 
@@ -30,7 +30,7 @@
     name: hexaa-backend
     image: hexaaproject/hexaa-backend:for-dev-env-variables
     networks:
-      - name: "{{ docker_network_name }}"
+      - name: "{{ docker_network_name_backend }}"
     volumes:
       - "{{ config_dir.path }}:/opt/hexaa-backend/app/config/site:ro"
       # export for the web container
@@ -45,20 +45,24 @@
   tempfile:
     state: directory
   register: ssp_config_dir
+  tags: [ssp]
 - name: create simplesamlphp-config from template
   template:
     src: simplesamlphp-config.php.j2
     dest: "{{ ssp_config_dir.path }}/config.php"
+  tags: [ssp]
 - name: create simplesamlphp-attributeauthority-hosted from template
   template:
     src: simplesamlphp-attributeauthority-hosted.php.j2
     dest: "{{ ssp_config_dir.path }}/attributeauthority-hosted.php"
+  tags: [ssp]
 
 
 - name: start ssp-aa container
   docker_container:
     name: hexaa-backend-ssp-aa
-    image: solazs/ssp-aa-php-fpm
+    image: hexaaproject/ssp-aa
+    #image: solazs/ssp-aa-php-fpm
     networks:
       - name: "{{ docker_network_name_backend }}"
     volumes:
@@ -66,6 +70,7 @@
       - "{{ ssp_config_dir.path }}/attributeauthority-hosted.php:/opt/simplesamlphp/metadata/attributeauthority-hosted.php:ro"
       - "{{ SSP_CERT_PATH }}:/opt/simplesamlphp/cert:ro"
       - /opt/simplesamlphp/www
+  tags: [ssp]
 
 - name: start hexaa-backend-web
   tags: [web]
@@ -77,7 +82,7 @@
       - "81:80"
       - "8443:8443"
     networks:
-      - name: "{{ docker_network_name }}"
+      - name: "{{ docker_network_name_backend }}"
     volumes_from:
       - hexaa-backend
       - hexaa-backend-ssp-aa

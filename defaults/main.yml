@@ -1,6 +1,6 @@
 ---
 
-docker_network_name: hexaa_backend
+docker_network_name_backend: hexaa_backend
 mysql_root_password: root
 
 HEXAA_BACKEND_DATABASE_DRIVER:   pdo_mysql
