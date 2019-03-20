@@ -87,6 +87,7 @@ SSP_ORG_URL: org.url
 SSP_SECRET_SALT: --------REPLACE-THIS------------
 
 SSP_ADMIN_PASSWD: ~
+SSP_LOGLEVEL: NOTICE
 
 # Path on host to dir with `aa.server.key.pem` and `aa.server.cert.pem` in it
 # generating:

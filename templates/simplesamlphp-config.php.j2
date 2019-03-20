@@ -257,7 +257,7 @@ $config = array(
      * Options: [syslog,file,errorlog]
      *
      */
-    'logging.level' => SimpleSAML\Logger::NOTICE,
+    'logging.level' => SimpleSAML\Logger::{{ SSP_LOGLEVEL }},
     'logging.handler' => 'errorlog',
 
     /*
