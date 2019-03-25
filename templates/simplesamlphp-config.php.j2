@@ -1026,10 +1026,12 @@ $config = array(
         array('type' => 'flatfile'),
         array(
          'type' => 'mdx',
-         'server' => 'http://mdx.eduid.hu',
+         'server' => '{{ SSP_MDX_SERVER }}',
          'cachedir' => '/tmp', //opcionális, de ajánlott
          'cachelength' => 86400, //opcionális,
-         'validateFingerprint' => '91:81:AD:2B:F1:C1:4E:47:93:A2:9D:49:34:B7:77:62:4F:2F:98:43' //opcionális
+         {% if SSP_MDX_FINGERPRINT is defined %}
+         'validateFingerprint' => '{{ SSP_MDX_FINGERPRINT }}' //opcionális
+         {% endif %}
       ),
     ),
 

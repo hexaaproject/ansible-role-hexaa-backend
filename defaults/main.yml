@@ -93,3 +93,4 @@ SSP_LOGLEVEL: NOTICE
 # generating:
 # openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem
 SSP_CERT_PATH: /opt/simplesamlphp/cert
+SSP_MDX_SERVER: https://metadata.lab.hexaa.eu
