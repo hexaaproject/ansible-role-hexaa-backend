@@ -1024,15 +1024,19 @@ $config = array(
      */
     'metadata.sources' => array(
         array('type' => 'flatfile'),
-        array(
-         'type' => 'mdx',
-         'server' => '{{ SSP_MDX_SERVER }}',
-         'cachedir' => '/tmp', //opcionális, de ajánlott
-         'cachelength' => 86400, //opcionális,
-         {% if SSP_MDX_FINGERPRINT is defined %}
-         'validateFingerprint' => '{{ SSP_MDX_FINGERPRINT }}' //opcionális
-         {% endif %}
-      ),
+        {% for provider in SSP_METADATA_PROVIDERS -%}
+          array(
+            'type' => '{{ provider.type }}',
+            {% if provider.type == "mdq" -%}
+              'server' => '{{ provider.server }}',
+              'cachedir' => '/tmp', //opcionális, de ajánlott
+              'cachelength' => 86400, //opcionális,
+              {% if provider.fingerprint is defined -%}
+                'validateFingerprint' => '{{ provider.fingerprint }}' //opcionális
+              {% endif %}
+            {% endif %}
+          ),
+        {% endfor %}
     ),
 
     /*

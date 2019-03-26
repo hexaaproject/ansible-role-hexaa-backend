@@ -4,10 +4,10 @@
     name: "{{ docker_network_name_backend }}"
     state: present
 
-- name: stop db container
-  docker_container:
-    name: "{{ HEXAA_BACKEND_DATABASE_HOST }}"
-    state: absent
+#- name: stop db container
+#  docker_container:
+#    name: "{{ HEXAA_BACKEND_DATABASE_HOST }}"
+#    state: absent
 
 - name: Create db container and connect to network
   docker_container:
@@ -20,4 +20,5 @@
       MYSQL_DATABASE: "{{ HEXAA_BACKEND_DATABASE_NAME }}"
       MYSQL_USER: "{{ HEXAA_BACKEND_DATABASE_USER }}"
       MYSQL_PASSWORD: "{{ HEXAA_BACKEND_DATABASE_PASSWORD }}"
-
+    volumes:
+      - /opt/hexaa/mysql:/var/lib/mysql
