@@ -35,11 +35,10 @@
       - "{{ config_dir.path }}:/opt/hexaa-backend/app/config/site:ro"
       # export for the web container
       - /opt/hexaa-backend/web
+      - /opt/hexaa-backend/hexaa-backend.deployed:/opt/hexaa-backend/hexaa-backend.deployed
     env:
       HEXAA_BACKEND_DATABASE_HOST: "{{ HEXAA_BACKEND_DATABASE_HOST }}"
       HEXAA_BACKEND_DATABASE_PORT: "{{ HEXAA_BACKEND_DATABASE_PORT }}"
-
-
 
 - name: create ssp config directory
   tempfile:
