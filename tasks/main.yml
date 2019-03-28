@@ -1,10 +1,12 @@
 ---
 - name: include environment
   include: environment.yml
+  tags: [backend]
 
 - name: include database
   include: database.yml
+  tags: [backend]
 
 - name: include hexaa-backend
   include: hexaa-backend.yml
-
+  tags: [backend]

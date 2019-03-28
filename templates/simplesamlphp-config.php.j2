@@ -30,28 +30,6 @@ $config = array(
     'baseurlpath' => 'simplesaml/',
 
     /*
-     * The 'application' configuration array groups a set configuration options
-     * relative to an application protected by SimpleSAMLphp.
-     */
-    //'application' => array(
-        /*
-         * The 'baseURL' configuration option allows you to specify a protocol,
-         * host and optionally a port that serves as the canonical base for all
-         * your application's URLs. This is useful when the environment
-         * observed in the server differs from the one observed by end users,
-         * for example, when using a load balancer to offload TLS.
-         *
-         * Note that this configuration option does not allow setting a path as
-         * part of the URL. If your setup involves URL rewriting or any other
-         * tricks that would result in SimpleSAMLphp observing a URL for your
-         * application's scripts different than the canonical one, you will
-         * need to compute the right URLs yourself and pass them dynamically
-         * to SimpleSAMLphp's API.
-         */
-        //'baseURL' => 'https://example.com'
-    //),
-
-    /*
      * The following settings are *filesystem paths* which define where
      * SimpleSAMLphp can find or write the following things:
      * - 'certdir': The base directory for certificate and key material.
@@ -809,38 +787,6 @@ $config = array(
     'production' => true,
 
 
-
-    /*********************
-     | DISCOVERY SERVICE |
-     *********************/
-
-    /*
-     * Whether the discovery service should allow the user to save his choice of IdP.
-     */
-    'idpdisco.enableremember' => true,
-    'idpdisco.rememberchecked' => true,
-
-    /*
-     * The disco service only accepts entities it knows.
-     */
-    'idpdisco.validate' => true,
-
-    'idpdisco.extDiscoveryStorage' => null,
-
-    /*
-     * IdP Discovery service look configuration.
-     * Wether to display a list of idp or to display a dropdown box. For many IdP' a dropdown box
-     * gives the best use experience.
-     *
-     * When using dropdown box a cookie is used to highlight the previously chosen IdP in the dropdown.
-     * This makes it easier for the user to choose the IdP
-     *
-     * Options: [links,dropdown]
-     */
-    'idpdisco.layout' => 'dropdown',
-
-
-
     /*************************************
      | AUTHENTICATION PROCESSING FILTERS |
      *************************************/
@@ -853,89 +799,6 @@ $config = array(
             'hexaa_master_secret' =>    '{{ HEXAA_BACKEND_MASTERKEY.otherMasterKey }}'
         ),
     ),
-
-    /*
-     * Authentication processing filters that will be executed for all IdPs
-     * Both Shibboleth and SAML 2.0
-     */
-    'authproc.idp' => array(
-        /* Enable the authproc filter below to add URN prefixes to all attributes
-         10 => array(
-             'class' => 'core:AttributeMap', 'addurnprefix'
-         ), */
-        /* Enable the authproc filter below to automatically generated eduPersonTargetedID.
-        20 => 'core:TargetedID',
-        */
-
-        // Adopts language from attribute to use in UI
-        30 => 'core:LanguageAdaptor',
-
-        45 => array(
-            'class'         => 'core:StatisticsWithAttribute',
-            'attributename' => 'realm',
-            'type'          => 'saml20-idp-SSO',
-        ),
-
-        /* When called without parameters, it will fallback to filter attributes ‹the old way›
-         * by checking the 'attributes' parameter in metadata on IdP hosted and SP remote.
-         */
-        50 => 'core:AttributeLimit',
-
-        /*
-         * Search attribute "distinguishedName" for pattern and replaces if found
-
-        60 => array(
-            'class' => 'core:AttributeAlter',
-            'pattern' => '/OU=studerende/',
-            'replacement' => 'Student',
-            'subject' => 'distinguishedName',
-            '%replace',
-        ),
-         */
-
-        /*
-         * Consent module is enabled (with no permanent storage, using cookies).
-
-        90 => array(
-            'class' => 'consent:Consent',
-            'store' => 'consent:Cookie',
-            'focus' => 'yes',
-            'checked' => TRUE
-        ),
-         */
-        // If language is set in Consent module it will be added as an attribute.
-        99 => 'core:LanguageAdaptor',
-    ),
-
-    /*
-     * Authentication processing filters that will be executed for all SPs
-     * Both Shibboleth and SAML 2.0
-     */
-    'authproc.sp' => array(
-        /*
-        10 => array(
-            'class' => 'core:AttributeMap', 'removeurnprefix'
-        ),
-        */
-
-        /*
-         * Generate the 'group' attribute populated from other variables, including eduPersonAffiliation.
-         60 => array(
-            'class' => 'core:GenerateGroups', 'eduPersonAffiliation'
-        ),
-        */
-        /*
-         * All users will be members of 'users' and 'members'
-        61 => array(
-            'class' => 'core:AttributeAdd', 'groups' => array('users', 'members')
-        ),
-        */
-
-        // Adopts language from attribute to use in UI
-        90 => 'core:LanguageAdaptor',
-
-    ),
-
 
 
     /**************************
