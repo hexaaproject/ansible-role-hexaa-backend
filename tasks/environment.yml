@@ -10,10 +10,11 @@
   pip:
     name: docker
 
-- name: install pip docker-compose
-  pip:
-    name: docker-compose
-
+### TODO installed but failed
+#- name: install pip docker-compose
+#  pip:
+#    name: docker-compose
+#    state: present
 
 # generate keys if they are not set
 # TODO: is this OK? could this be done in a simpler way?
@@ -36,6 +37,14 @@
   set_fact:
       HEXAA_BACKEND_SECRET: "{{ SECRET.stdout }}"
 
+- name: create log dir
+  file: 
+    path: /opt/hexaa/logs/backend
+    state: directory
+    mode: 0755
+    owner: www-data
+  register: log_dir
+  become: true
 
 - name: create config directory
   tempfile:
