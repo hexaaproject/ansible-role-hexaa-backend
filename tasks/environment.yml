@@ -46,10 +46,19 @@
   register: log_dir
   become: true
 
-- name: create config directory
-  tempfile:
+- name: create config dir
+  file: 
+    path: /opt/hexaa/config/backend
     state: directory
+    mode: 0775
+    owner: www-data
+    group: hbit
   register: config_dir
+  become: true
+- name: ensure ansible generated
+  file: 
+    path: "{{ config_dir.path }}/00_GENERATED_BY_ANSIBLE"
+    state: touch
 - name: create parameters.yml from template
   template:
     src: parameters.yml.j2
@@ -62,11 +71,6 @@
   copy:
     src: files/hexaa_entityids_dist.yml
     dest: "{{ config_dir.path }}/hexaa_entityids.yml"
-- name: set config dir permissions
-  file:
-    path: "{{ config_dir.path }}"
-    mode: 0755
-
 
 - name: create nginx config
   tags: [web]

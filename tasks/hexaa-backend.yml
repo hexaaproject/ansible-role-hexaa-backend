@@ -33,11 +33,10 @@
       - name: "{{ docker_network_name_backend }}"
     volumes:
       - "{{ config_dir.path }}:/opt/hexaa-backend/app/config/site:ro"
-      - "{{ config_dir.path }}:/opt/hexaa-backend/logs/config/site:ro"
-      # export for the web container
-      - /opt/hexaa-backend/web
       - /opt/hexaa-backend/hexaa-backend.deployed:/opt/hexaa-backend/hexaa-backend.deployed
       - "{{ log_dir.path }}:/opt/hexaa-backend/app/logs"
+      # export for the web container
+      - /opt/hexaa-backend/web
     env:
       HEXAA_BACKEND_DATABASE_HOST: "{{ HEXAA_BACKEND_DATABASE_HOST }}"
       HEXAA_BACKEND_DATABASE_PORT: "{{ HEXAA_BACKEND_DATABASE_PORT }}"
