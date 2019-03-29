@@ -28,7 +28,7 @@
 - name: start hexaa-backend
   docker_container:
     name: hexaa-backend
-    image: hexaaproject/hexaa-backend:for-dev-env-variables
+    image: hexaaproject/hexaa-backend:latest
     networks:
       - name: "{{ docker_network_name_backend }}"
     volumes:

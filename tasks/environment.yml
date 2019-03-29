@@ -59,6 +59,7 @@
   file: 
     path: "{{ config_dir.path }}/00_GENERATED_BY_ANSIBLE"
     state: touch
+    mode: 0664
 - name: create parameters.yml from template
   template:
     src: parameters.yml.j2
@@ -71,6 +72,7 @@
   copy:
     src: files/hexaa_entityids_dist.yml
     dest: "{{ config_dir.path }}/hexaa_entityids.yml"
+  become: true
 
 - name: create nginx config
   tags: [web]
