@@ -28,7 +28,7 @@
 - name: start hexaa-backend
   docker_container:
     name: hexaa-backend
-    image: "{{ docker_image_name_backend }}:{{ docker_network_tag_backend"
+    image: "{{ docker_image_name_backend }}:{{ docker_image_tag_backend }}"
     networks:
       - name: "{{ docker_network_name_backend }}"
     volumes:
