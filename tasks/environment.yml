@@ -72,6 +72,8 @@
   copy:
     src: files/hexaa_entityids_dist.yml
     dest: "{{ config_dir.path }}/hexaa_entityids.yml"
+    # do not overwrite existing generated list:
+    force: no
   become: true
 
 - name: create nginx config

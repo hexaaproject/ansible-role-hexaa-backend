@@ -22,6 +22,7 @@
       METADATA_SOURCE_URLS: "{{ HEXAA_BACKEND_METADATA_SOURCE_URLS }}"
       TARGET_FILE_PATH: /tmp/hexaa_entityids.yml
       UPDATE_INTERVAL_MINUTES: "60"
+    restart: yes
   when: (HEXAA_BACKEND_METADATA_SOURCE_URLS != "" and HEXAA_BACKEND_METADATA_SOURCE_URLS is not none)
 
 
@@ -33,7 +34,6 @@
       - name: "{{ docker_network_name_backend }}"
     volumes:
       - "{{ config_dir.path }}:/opt/hexaa-backend/app/config/site:ro"
-      - /opt/hexaa-backend/hexaa-backend.deployed:/opt/hexaa-backend/hexaa-backend.deployed
       - "{{ log_dir.path }}:/opt/hexaa-backend/app/logs"
       # export for the web container
       - /opt/hexaa-backend/web
