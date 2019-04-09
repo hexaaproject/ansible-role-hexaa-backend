@@ -17,7 +17,7 @@
     name: hexaa-service-entityids-generator
     image: hexaaproject/hexaa-service-entityids-generator
     volumes:
-      - "{{ config_dir.path }}/hexaa_entityids.yml:/tmp/hexaa_entityids.yml"
+      - "{{ config_dir.path }}/site/hexaa_entityids.yml:/tmp/hexaa_entityids.yml"
     env:
       METADATA_SOURCE_URLS: "{{ HEXAA_BACKEND_METADATA_SOURCE_URLS }}"
       TARGET_FILE_PATH: /tmp/hexaa_entityids.yml
@@ -33,8 +33,9 @@
     networks:
       - name: "{{ docker_network_name_backend }}"
     volumes:
-      - "{{ config_dir.path }}:/opt/hexaa-backend/app/config/site:ro"
+      - "{{ config_dir.path }}/site:/opt/hexaa-backend/app/config/site:ro"
       - "{{ log_dir.path }}:/opt/hexaa-backend/app/logs"
+      - "{{ config_dir.path }}/hooks:/opt/hexaa-backend-hooks"
       # export for the web container
       - /opt/hexaa-backend/web
     env:
