@@ -30,6 +30,7 @@
   docker_container:
     name: hexaa-backend
     image: "{{ docker_image_name_backend }}:{{ docker_image_tag_backend }}"
+    restart: yes
     networks:
       - name: "{{ docker_network_name_backend }}"
     volumes:
@@ -43,19 +44,22 @@
       HEXAA_BACKEND_DATABASE_PORT: "{{ HEXAA_BACKEND_DATABASE_PORT }}"
 
 - name: create ssp config directory
-  tempfile:
+  file:
+    path: "{{ config_dir.path }}/ssp"
     state: directory
-  register: ssp_config_dir
+  become: true
   tags: [ssp]
 - name: create simplesamlphp-config from template
   template:
     src: simplesamlphp-config.php.j2
-    dest: "{{ ssp_config_dir.path }}/config.php"
+    dest: "{{ config_dir.path }}/ssp/config.php"
+  become: true
   tags: [ssp]
 - name: create simplesamlphp-attributeauthority-hosted from template
   template:
     src: simplesamlphp-attributeauthority-hosted.php.j2
-    dest: "{{ ssp_config_dir.path }}/attributeauthority-hosted.php"
+    dest: "{{ config_dir.path }}/ssp/attributeauthority-hosted.php"
+  become: true
   tags: [ssp]
 
 
@@ -67,9 +71,10 @@
     networks:
       - name: "{{ docker_network_name_backend }}"
     volumes:
-      - "{{ ssp_config_dir.path }}/config.php:/opt/simplesamlphp/config/config.php:ro"
-      - "{{ ssp_config_dir.path }}/attributeauthority-hosted.php:/opt/simplesamlphp/metadata/attributeauthority-hosted.php:ro"
+      - "{{ config_dir.path }}/ssp/config.php:/opt/simplesamlphp/config/config.php:ro"
+      - "{{ config_dir.path }}/ssp/attributeauthority-hosted.php:/opt/simplesamlphp/metadata/attributeauthority-hosted.php:ro"
       - "{{ SSP_CERT_PATH }}:/opt/simplesamlphp/cert:ro"
+      # export for the web container
       - /opt/simplesamlphp/www
   tags: [ssp]
 
@@ -88,5 +93,5 @@
       - hexaa-backend
       - hexaa-backend-ssp-aa
     volumes:
-      - "{{ nginx_conf.path }}:/etc/nginx/conf.d/default.conf:ro"
+      - "{{ config_dir.path }}/nginx.conf:/etc/nginx/conf.d/default.conf:ro"
       - "{{ SSP_CERT_PATH }}:/opt/simplesamlphp/cert:ro"

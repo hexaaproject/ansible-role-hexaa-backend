@@ -10,12 +10,6 @@
   pip:
     name: docker
 
-### TODO installed but failed
-#- name: install pip docker-compose
-#  pip:
-#    name: docker-compose
-#    state: present
-
 # generate keys if they are not set
 # TODO: is this OK? could this be done in a simpler way?
 - name: generate default master key
@@ -41,8 +35,6 @@
   file:
     path: /opt/hexaa/logs/backend
     state: directory
-    mode: 0755
-    owner: www-data
   register: log_dir
   become: true
 
@@ -50,54 +42,44 @@
   file:
     path: /opt/hexaa/config/backend
     state: directory
-    mode: 0775
-    owner: www-data
-    group: hbit
   register: config_dir
   become: true
 - name: create site config dir
   file:
     path: "{{ config_dir.path }}/site"
     state: directory
-    mode: 0775
-    group: hbit
+  become: true
 - name: ensure ansible generated
   file:
     path: "{{ config_dir.path }}/00_GENERATED_BY_ANSIBLE"
     state: touch
-    mode: 0664
+  become: true
 - name: create parameters.yml from template
   template:
     src: parameters.yml.j2
     dest: "{{ config_dir.path }}/site/parameters.yml"
+  become: true
 - name: create hexaa_admins.yml from template
   template:
     src: hexaa_admins.yml.j2
     dest: "{{ config_dir.path }}/site/hexaa_admins.yml"
+  become: true
 - name: copy default entity ID config
   copy:
     src: files/hexaa_entityids_dist.yml
     dest: "{{ config_dir.path }}/site/hexaa_entityids.yml"
     # do not overwrite existing generated list:
     force: no
+    # uid of container default user
+    owner: 1033
   become: true
 
-- name: create nginx config
-  tags: [web]
-  tempfile:
-    state: file
-  register: nginx_conf
-- name: write nginx config
+- name: copy nginx config
   tags: [web]
   copy:
-    dest: "{{ nginx_conf.path }}"
     src: files/nginx.conf
-- name: set nginx config permissions
-  tags: [web]
-  file:
-    path: "{{ nginx_conf.path }}"
-    mode: 0644
-
+    dest: "{{ config_dir.path }}/nginx.conf"
+  become: true
 - name: ensure saml-aa cert exists
   stat:
     path: "{{ SSP_CERT_PATH }}/aa.server.cert.pem"
@@ -121,17 +103,17 @@
 - name: fail saml-aa ssl
   fail:
     msg: "Fail saml-aa ssl configs see above"
+  become: true
   when: saml_aa_privkey.stat.exists == False or saml_aa_cert.stat.exists == False
 
 - name: create masterkey hook dir
   file:
     path: "{{ config_dir.path }}/hooks"
     state: directory
-    mode: 0775
+  become: true
 - name: copy masterkey hooks
   copy:
     src: "files/{{ HEXAA_BACKEND_HOOK_DIR }}/"
     dest: "{{ config_dir.path }}/hooks"
-    group: hbit
-    mode: 0664
+  become: true
   when: HEXAA_BACKEND_HOOK_DIR != ""
