@@ -48,6 +48,10 @@ HEXAA_BACKEND_LOG_TO_STDERR: true
 HEXAA_BACKEND_MASTERKEY:
   defaultMasterKey: ""
 
+# path (relative to `files` in this role or the parent playbook) to dir that
+# contains the masterkey hooks
+HEXAA_BACKEND_HOOK_DIR: ""
+
 #: =============
 # Hexaa admins
 #: =============

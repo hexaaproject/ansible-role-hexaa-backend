@@ -38,7 +38,7 @@
       HEXAA_BACKEND_SECRET: "{{ SECRET.stdout }}"
 
 - name: create log dir
-  file: 
+  file:
     path: /opt/hexaa/logs/backend
     state: directory
     mode: 0755
@@ -47,7 +47,7 @@
   become: true
 
 - name: create config dir
-  file: 
+  file:
     path: /opt/hexaa/config/backend
     state: directory
     mode: 0775
@@ -55,23 +55,29 @@
     group: hbit
   register: config_dir
   become: true
+- name: create site config dir
+  file:
+    path: "{{ config_dir.path }}/site"
+    state: directory
+    mode: 0775
+    group: hbit
 - name: ensure ansible generated
-  file: 
+  file:
     path: "{{ config_dir.path }}/00_GENERATED_BY_ANSIBLE"
     state: touch
     mode: 0664
 - name: create parameters.yml from template
   template:
     src: parameters.yml.j2
-    dest: "{{ config_dir.path }}/parameters.yml"
+    dest: "{{ config_dir.path }}/site/parameters.yml"
 - name: create hexaa_admins.yml from template
   template:
     src: hexaa_admins.yml.j2
-    dest: "{{ config_dir.path }}/hexaa_admins.yml"
+    dest: "{{ config_dir.path }}/site/hexaa_admins.yml"
 - name: copy default entity ID config
   copy:
     src: files/hexaa_entityids_dist.yml
-    dest: "{{ config_dir.path }}/hexaa_entityids.yml"
+    dest: "{{ config_dir.path }}/site/hexaa_entityids.yml"
     # do not overwrite existing generated list:
     force: no
   become: true
@@ -117,3 +123,15 @@
     msg: "Fail saml-aa ssl configs see above"
   when: saml_aa_privkey.stat.exists == False or saml_aa_cert.stat.exists == False
 
+- name: create masterkey hook dir
+  file:
+    path: "{{ config_dir.path }}/hooks"
+    state: directory
+    mode: 0775
+- name: copy masterkey hooks
+  copy:
+    src: "files/{{ HEXAA_BACKEND_HOOK_DIR }}/"
+    dest: "{{ config_dir.path }}/hooks"
+    group: hbit
+    mode: 0664
+  when: HEXAA_BACKEND_HOOK_DIR != ""
