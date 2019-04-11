@@ -91,3 +91,29 @@
   file:
     path: "{{ nginx_conf.path }}"
     mode: 0644
+
+- name: ensure saml-aa cert exists
+  stat:
+    path: "{{ SSP_CERT_PATH }}/aa.server.cert.pem"
+  register: saml_aa_cert
+
+- name: ensure saml-aa privkey exists
+  stat:
+    path: "{{ SSP_CERT_PATH }}/aa.server.key.pem"
+  register: saml_aa_privkey
+
+- name: debug saml-aa cert exists
+  debug:
+    msg: "There is no saml-aa cert at {{ SSP_CERT_PATH }}/aa.server.cert.pem"
+  when: saml_aa_cert.stat.exists == False
+
+- name: debug saml-aa privkey exists
+  debug:
+    msg: "There is no saml-aa privkey at {{ SSP_CERT_PATH }}/aa.server.key.pem"
+  when: saml_aa_privkey.stat.exists == False
+
+- name: fail saml-aa ssl
+  fail:
+    msg: "Fail saml-aa ssl configs see above"
+  when: saml_aa_privkey.stat.exists == False or saml_aa_cert.stat.exists == False
+
