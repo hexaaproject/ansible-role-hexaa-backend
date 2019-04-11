@@ -21,7 +21,6 @@
   set_fact:
       HEXAA_BACKEND_MASTERKEY: "{{ HEXAA_BACKEND_MASTERKEY | combine({'defaultMasterKey': DEFAULT_KEY.stdout}) }}"
 
-
 - name: generate secret
   when: HEXAA_BACKEND_SECRET == ""
   shell: "tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=32 count=1 2>/dev/null;echo"
@@ -80,6 +79,26 @@
     src: files/nginx.conf
     dest: "{{ config_dir.path }}/nginx.conf"
   become: true
+
+- name: create ssp config directory
+  file:
+    path: "{{ config_dir.path }}/ssp"
+    state: directory
+  become: true
+  tags: [ssp]
+- name: create simplesamlphp-config from template
+  template:
+    src: simplesamlphp-config.php.j2
+    dest: "{{ config_dir.path }}/ssp/config.php"
+  become: true
+  tags: [ssp]
+- name: create simplesamlphp-attributeauthority-hosted from template
+  template:
+    src: simplesamlphp-attributeauthority-hosted.php.j2
+    dest: "{{ config_dir.path }}/ssp/attributeauthority-hosted.php"
+  become: true
+  tags: [ssp]
+
 - name: ensure saml-aa cert exists
   stat:
     path: "{{ SSP_CERT_PATH }}/aa.server.cert.pem"

@@ -43,31 +43,11 @@
       HEXAA_BACKEND_DATABASE_HOST: "{{ HEXAA_BACKEND_DATABASE_HOST }}"
       HEXAA_BACKEND_DATABASE_PORT: "{{ HEXAA_BACKEND_DATABASE_PORT }}"
 
-- name: create ssp config directory
-  file:
-    path: "{{ config_dir.path }}/ssp"
-    state: directory
-  become: true
-  tags: [ssp]
-- name: create simplesamlphp-config from template
-  template:
-    src: simplesamlphp-config.php.j2
-    dest: "{{ config_dir.path }}/ssp/config.php"
-  become: true
-  tags: [ssp]
-- name: create simplesamlphp-attributeauthority-hosted from template
-  template:
-    src: simplesamlphp-attributeauthority-hosted.php.j2
-    dest: "{{ config_dir.path }}/ssp/attributeauthority-hosted.php"
-  become: true
-  tags: [ssp]
-
 
 - name: start ssp-aa container
   docker_container:
     name: hexaa-backend-ssp-aa
     image: hexaaproject/ssp-aa
-    #image: solazs/ssp-aa-php-fpm
     networks:
       - name: "{{ docker_network_name_backend }}"
     volumes:
@@ -83,7 +63,6 @@
   docker_container:
     name: hexaa-backend-web
     image: nginx
-    #auto_remove: yes
     ports:
       - "81:80"
       - "8443:8443"
