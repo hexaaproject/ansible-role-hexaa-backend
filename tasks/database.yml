@@ -22,3 +22,5 @@
       MYSQL_PASSWORD: "{{ HEXAA_BACKEND_DATABASE_PASSWORD }}"
     volumes:
       - /opt/hexaa/mysql:/var/lib/mysql
+    pull: yes
+    restart_policy: "{{ docker_restart_policy }}"

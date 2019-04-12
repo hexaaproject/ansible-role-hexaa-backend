@@ -10,6 +10,8 @@
     image: "memcached"
     networks:
       - name: "{{ docker_network_name_backend }}"
+    pull: yes
+    restart_policy: "{{ docker_restart_policy }}"
 
 
 - name: start entity id list generator container
@@ -22,6 +24,8 @@
       METADATA_SOURCE_URLS: "{{ HEXAA_BACKEND_METADATA_SOURCE_URLS }}"
       TARGET_FILE_PATH: /tmp/hexaa_entityids.yml
       UPDATE_INTERVAL_MINUTES: "60"
+    pull: yes
+    restart_policy: "{{ docker_restart_policy }}"
     restart: yes
   when: (HEXAA_BACKEND_METADATA_SOURCE_URLS != "" and HEXAA_BACKEND_METADATA_SOURCE_URLS is not none)
 
@@ -30,7 +34,6 @@
   docker_container:
     name: hexaa-backend
     image: "{{ docker_image_name_backend }}:{{ docker_image_tag_backend }}"
-    restart: yes
     networks:
       - name: "{{ docker_network_name_backend }}"
     volumes:
@@ -42,6 +45,9 @@
     env:
       HEXAA_BACKEND_DATABASE_HOST: "{{ HEXAA_BACKEND_DATABASE_HOST }}"
       HEXAA_BACKEND_DATABASE_PORT: "{{ HEXAA_BACKEND_DATABASE_PORT }}"
+    pull: yes
+    restart_policy: "{{ docker_restart_policy }}"
+    restart: yes
 
 
 - name: start ssp-aa container
@@ -56,6 +62,8 @@
       - "{{ SSP_CERT_PATH }}:/opt/simplesamlphp/cert:ro"
       # export for the web container
       - /opt/simplesamlphp/www
+    pull: yes
+    restart_policy: "{{ docker_restart_policy }}"
   tags: [ssp]
 
 - name: start hexaa-backend-web
@@ -74,3 +82,5 @@
     volumes:
       - "{{ config_dir.path }}/nginx.conf:/etc/nginx/conf.d/default.conf:ro"
       - "{{ SSP_CERT_PATH }}:/opt/simplesamlphp/cert:ro"
+    pull: yes
+    restart_policy: "{{ docker_restart_policy }}"

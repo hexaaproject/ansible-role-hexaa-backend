@@ -34,6 +34,7 @@
   file:
     path: /opt/hexaa/logs/backend
     state: directory
+    mode: ugo+rwxt
   register: log_dir
   become: true
 
@@ -43,16 +44,19 @@
     state: directory
   register: config_dir
   become: true
+  tags: [ssp]
 - name: create site config dir
   file:
     path: "{{ config_dir.path }}/site"
     state: directory
   become: true
+
 - name: ensure ansible generated
   file:
     path: "{{ config_dir.path }}/00_GENERATED_BY_ANSIBLE"
     state: touch
   become: true
+
 - name: create parameters.yml from template
   template:
     src: parameters.yml.j2

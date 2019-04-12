@@ -4,6 +4,8 @@ docker_network_name_backend: hexaa_backend
 docker_image_name_backend: hexaaproject/hexaa-backend
 docker_image_tag_backend: latest
 
+docker_restart_policy: on-failure
+
 mysql_root_password: root
 
 HEXAA_BACKEND_DATABASE_DRIVER:   pdo_mysql
@@ -105,4 +107,9 @@ SSP_LOGLEVEL: NOTICE
 # generating:
 # openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem
 SSP_CERT_PATH: /opt/simplesamlphp/cert
-SSP_MDX_SERVER: https://metadata.lab.hexaa.eu
+
+SSP_METADATA_PROVIDERS:
+#  - type: mdq
+#    server: https://metadata.domain.tld
+#    # optional:
+#    fingerprint: 'HE:X:FI:NG:ER:PR:IN:T'
