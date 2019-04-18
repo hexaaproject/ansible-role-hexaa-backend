@@ -4,11 +4,6 @@
     name: "{{ docker_network_name_backend }}"
     state: present
 
-#- name: stop db container
-#  docker_container:
-#    name: "{{ HEXAA_BACKEND_DATABASE_HOST }}"
-#    state: absent
-
 - name: Create db container and connect to network
   docker_container:
     name: "{{ HEXAA_BACKEND_DATABASE_HOST }}"

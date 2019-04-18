@@ -25,9 +25,9 @@ HEXAA_MAILER_PASSWORD:  ~
 HEXAA_BACKEND_FROM_ADDRESS: hexaa@example.com
 
 HEXAA_BACKEND_URL_PROTO:   https
-HEXAA_BACKEND_URL_DOMAIN:  domain.tld
+HEXAA_BACKEND_URL_HOST:  domain.tld
 HEXAA_BACKEND_URL_PATH:    /hexaa-backend/
-HEXAA_BACKEND_URL: "{{HEXAA_BACKEND_URL_PROTO}}://{{HEXAA_BACKEND_URL_DOMAIN}}{{HEXAA_BACKEND_URL_PATH}}"
+HEXAA_BACKEND_URL: "{{HEXAA_BACKEND_URL_PROTO}}://{{HEXAA_BACKEND_URL_HOST}}{{HEXAA_BACKEND_URL_PATH}}"
 
 #: =====================
 # Memcached parameters
@@ -92,7 +92,7 @@ HEXAA_BACKEND_AUTH_COOKIE_NAME: hexaa_auth
 
 #  SimpleSAMLphp AA config
 # =========================
-SSP_ENTITY_ID: https://staging.hexaa.eu/aa
+SSP_ENTITY_ID: https://domain.tld/aa
 
 SSP_ORG_NAME: ORG
 SSP_ORG_DISPLAY_NAME: ORG
