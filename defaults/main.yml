@@ -102,6 +102,7 @@ SSP_SECRET_SALT: --------REPLACE-THIS------------
 
 SSP_ADMIN_PASSWD: ~
 SSP_LOGLEVEL: NOTICE
+SSP_SIGN_ASSERTION: true
 
 # Path on host to dir with `aa.server.key.pem` and `aa.server.cert.pem` in it
 # generating:

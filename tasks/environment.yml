@@ -102,6 +102,12 @@
     dest: "{{ config_dir.path }}/ssp/attributeauthority-hosted.php"
   become: true
   tags: [ssp]
+- name: create module_aa config from template
+  template:
+    src: simplesamlphp-module_aa.php.j2
+    dest: "{{ config_dir.path }}/ssp/module_aa.php"
+  become: true
+  tags: [ssp]
 
 - name: ensure saml-aa cert exists
   stat:

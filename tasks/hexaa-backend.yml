@@ -59,6 +59,7 @@
     volumes:
       - "{{ config_dir.path }}/ssp/config.php:/opt/simplesamlphp/config/config.php:ro"
       - "{{ config_dir.path }}/ssp/attributeauthority-hosted.php:/opt/simplesamlphp/metadata/attributeauthority-hosted.php:ro"
+      - "{{ config_dir.path }}/ssp/module_aa.php:/opt/simplesamlphp/config/module_aa.php:ro"
       - "{{ SSP_CERT_PATH }}:/opt/simplesamlphp/cert:ro"
       # export for the web container
       - /opt/simplesamlphp/www
