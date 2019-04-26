@@ -32,7 +32,7 @@
 
 - name: create log dir
   file:
-    path: /opt/hexaa/logs/backend
+    path: "{{ HEXAA_HOST_DIR }}/logs/backend"
     state: directory
     mode: ugo+rwxt
   register: log_dir
@@ -40,7 +40,7 @@
 
 - name: create config dir
   file:
-    path: /opt/hexaa/config/backend
+    path: "{{HEXAA_HOST_DIR }}/config/backend"
     state: directory
   register: config_dir
   become: true

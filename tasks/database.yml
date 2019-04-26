@@ -16,6 +16,6 @@
       MYSQL_USER: "{{ HEXAA_BACKEND_DATABASE_USER }}"
       MYSQL_PASSWORD: "{{ HEXAA_BACKEND_DATABASE_PASSWORD }}"
     volumes:
-      - /opt/hexaa/mysql:/var/lib/mysql
+      - "{{ HEXAA_HOST_DIR }}/mysql:/var/lib/mysql"
     pull: yes
     restart_policy: "{{ docker_restart_policy }}"
