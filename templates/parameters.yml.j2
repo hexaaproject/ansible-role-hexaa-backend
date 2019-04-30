@@ -27,6 +27,7 @@ parameters:
     # you can generate a secret using:
     # tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=32 count=1 2>/dev/null;echo
     secret: {{ HEXAA_BACKEND_SECRET }}
+    kernel.secret: {{ HEXAA_BACKEND_SECRET }}
 
     # HEXAA UI URL
     hexaa_ui_url: {{ HEXAA_FRONTEND_URL }}
