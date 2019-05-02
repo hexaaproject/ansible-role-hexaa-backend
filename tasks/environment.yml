@@ -4,7 +4,6 @@
   package:
     name: python3-pip
     state: present
-  become: true
 
 - name: install pip docker
   pip:
@@ -36,77 +35,70 @@
     state: directory
     mode: ugo+rwxt
   register: log_dir
-  become: true
 
 - name: create config dir
   file:
     path: "{{HEXAA_HOST_DIR }}/config/backend"
     state: directory
   register: config_dir
-  become: true
   tags: [ssp]
 - name: create site config dir
   file:
     path: "{{ config_dir.path }}/site"
     state: directory
-  become: true
 
 - name: ensure ansible generated
   file:
     path: "{{ config_dir.path }}/00_GENERATED_BY_ANSIBLE"
     state: touch
-  become: true
 
 - name: create parameters.yml from template
   template:
     src: parameters.yml.j2
     dest: "{{ config_dir.path }}/site/parameters.yml"
-  become: true
 - name: create hexaa_admins.yml from template
   template:
     src: hexaa_admins.yml.j2
     dest: "{{ config_dir.path }}/site/hexaa_admins.yml"
-  become: true
 - name: copy default entity ID config
   copy:
     src: files/hexaa_entityids_dist.yml
     dest: "{{ config_dir.path }}/site/hexaa_entityids.yml"
     # do not overwrite existing generated list:
     force: no
-    # uid of container default user
-    owner: 1033
-  become: true
+
+- name: set permissions for entity ID list file
+  file:
+    path: "{{ config_dir.path }}/site/hexaa_entityids.yml"
+    # it must be writable by the user running the generator script in the
+    # container
+    mode: o+w
 
 - name: copy nginx config
   tags: [web]
   copy:
     src: files/nginx.conf
     dest: "{{ config_dir.path }}/nginx.conf"
-  become: true
 
 - name: create ssp config directory
   file:
     path: "{{ config_dir.path }}/ssp"
     state: directory
-  become: true
   tags: [ssp]
 - name: create simplesamlphp-config from template
   template:
     src: simplesamlphp-config.php.j2
     dest: "{{ config_dir.path }}/ssp/config.php"
-  become: true
   tags: [ssp]
 - name: create simplesamlphp-attributeauthority-hosted from template
   template:
     src: simplesamlphp-attributeauthority-hosted.php.j2
     dest: "{{ config_dir.path }}/ssp/attributeauthority-hosted.php"
-  become: true
   tags: [ssp]
 - name: create module_aa config from template
   template:
     src: simplesamlphp-module_aa.php.j2
     dest: "{{ config_dir.path }}/ssp/module_aa.php"
-  become: true
   tags: [ssp]
 
 - name: ensure saml-aa cert exists
@@ -132,17 +124,14 @@
 - name: fail saml-aa ssl
   fail:
     msg: "Fail saml-aa ssl configs see above"
-  become: true
   when: saml_aa_privkey.stat.exists == False or saml_aa_cert.stat.exists == False
 
 - name: create masterkey hook dir
   file:
     path: "{{ config_dir.path }}/hooks"
     state: directory
-  become: true
 - name: copy masterkey hooks
   copy:
     src: "files/{{ HEXAA_BACKEND_HOOK_DIR }}/"
     dest: "{{ config_dir.path }}/hooks"
-  become: true
   when: HEXAA_BACKEND_HOOK_DIR != ""
