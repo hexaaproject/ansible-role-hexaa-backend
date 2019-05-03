@@ -112,6 +112,10 @@ SSP_SIGN_ASSERTION: true
 # openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem
 SSP_CERT_PATH: /opt/simplesamlphp/cert
 
+# enable generating self-signed certificate if the expected files don't exist
+# (not recommended for production use)
+HEXAA_GENERATE_SELFSIGNED: no
+
 SSP_METADATA_PROVIDERS:
 #  - type: mdq
 #    server: https://metadata.domain.tld

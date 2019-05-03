@@ -18,6 +18,8 @@
   docker_container:
     name: hexaa-service-entityids-generator
     image: hexaaproject/hexaa-service-entityids-generator
+    networks:
+      - name: "{{ docker_network_name_backend }}"
     volumes:
       - "{{ config_dir.path }}/site/hexaa_entityids.yml:/tmp/hexaa_entityids.yml"
     env:
