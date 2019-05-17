@@ -6,6 +6,8 @@ docker_image_tag_backend: latest
 
 docker_restart_policy: on-failure
 
+docker_etc_hosts: {}
+
 # Directory on host where config files and logs should be put
 HEXAA_HOST_DIR: /opt/hexaa
 

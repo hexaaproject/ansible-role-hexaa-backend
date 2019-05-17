@@ -10,6 +10,7 @@
     image: "memcached"
     networks:
       - name: "{{ docker_network_name_backend }}"
+    #etc_hosts: "{{ docker_etc_hosts }}"
     pull: yes
     restart_policy: "{{ docker_restart_policy }}"
 
@@ -20,6 +21,7 @@
     image: hexaaproject/hexaa-service-entityids-generator
     networks:
       - name: "{{ docker_network_name_backend }}"
+    etc_hosts: "{{ docker_etc_hosts }}"
     volumes:
       - "{{ config_dir.path }}/site/hexaa_entityids.yml:/tmp/hexaa_entityids.yml"
     env:
@@ -38,6 +40,7 @@
     image: "{{ docker_image_name_backend }}:{{ docker_image_tag_backend }}"
     networks:
       - name: "{{ docker_network_name_backend }}"
+    #etc_hosts: "{{ docker_etc_hosts }}"
     volumes:
       - "{{ config_dir.path }}/site:/opt/hexaa-backend/app/config/site:ro"
       - "{{ log_dir.path }}:/opt/hexaa-backend/app/logs"
@@ -58,6 +61,7 @@
     image: hexaaproject/ssp-aa
     networks:
       - name: "{{ docker_network_name_backend }}"
+    etc_hosts: "{{ docker_etc_hosts }}"
     volumes:
       - "{{ config_dir.path }}/ssp/config.php:/opt/simplesamlphp/config/config.php:ro"
       - "{{ config_dir.path }}/ssp/attributeauthority-hosted.php:/opt/simplesamlphp/metadata/attributeauthority-hosted.php:ro"
@@ -79,6 +83,7 @@
       - "8443:8443"
     networks:
       - name: "{{ docker_network_name_backend }}"
+    #etc_hosts: "{{ docker_etc_hosts }}"
     volumes_from:
       - hexaa-backend
       - hexaa-backend-ssp-aa

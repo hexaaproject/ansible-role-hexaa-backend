@@ -131,6 +131,7 @@
 - name: Generate an private key for SSP
   openssl_privatekey:
     path: "{{ SSP_CERT_PATH }}/aa.server.key.pem"
+    mode: '644'
   when:
     - HEXAA_GENERATE_SELFSIGNED
     - not saml_aa_privkey.stat.exists
