@@ -795,7 +795,8 @@ $config = array(
         60 => array(
             'class' => 'hexaa:Hexaa',
             'nameId_attribute_name' =>  'subject_nameid', // look at the aa authsource config
-            'hexaa_api_url' =>          '{{ HEXAA_BACKEND_URL }}api',
+            //'hexaa_api_url' =>          '{{ HEXAA_BACKEND_URL }}api',
+            'hexaa_api_url' =>          'http://hexaa-backend-web/hexaa-backend/api',
             'hexaa_master_secret' =>    '{{ HEXAA_BACKEND_MASTERKEY.otherMasterKey }}'
         ),
     ),
