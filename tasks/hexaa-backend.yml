@@ -58,7 +58,7 @@
 - name: start ssp-aa container
   docker_container:
     name: hexaa-backend-ssp-aa
-    image: hexaaproject/ssp-aa
+    image: hexaaproject/ssp-aa:latest
     networks:
       - name: "{{ docker_network_name_backend }}"
     etc_hosts: "{{ docker_etc_hosts }}"
