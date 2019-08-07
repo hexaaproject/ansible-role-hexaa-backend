@@ -38,7 +38,7 @@
 
 - name: create config dir
   file:
-    path: "{{HEXAA_HOST_DIR }}/config/backend"
+    path: "{{ HEXAA_HOST_DIR }}/config/backend"
     state: directory
   register: config_dir
   tags: [ssp]
@@ -140,7 +140,7 @@
     path:            "{{ SSP_CERT_PATH }}/csr.csr"
     privatekey_path: "{{ SSP_CERT_PATH }}/aa.server.key.pem"
     common_name:     "{{ HEXAA_BACKEND_URL_HOST }}"
-    basic_constraints: ["CA: true"]
+    basic_constraints: ["CA:TRUE"]
     basic_constraints_critical: true
     email_address: "root@{{ HEXAA_BACKEND_URL_HOST }}"
     organization_name: "{{ HEXAA_BACKEND_URL_HOST }}"
