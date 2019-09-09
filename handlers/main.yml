@@ -1,0 +1,32 @@
+---
+
+- name: Restart backend container
+  listen: restart backend
+  docker_container:
+    name: hexaa-backend
+    restart: yes
+
+- name: Restart backend web server
+  listen: restart backend-web
+  docker_container:
+    name: hexaa-backend-web
+    restart: yes
+
+- name: Restart backend SSP AA container
+  listen: restart backend-ssp-aa
+  docker_container:
+    name: hexaa-backend-ssp-aa
+    restart: yes
+
+- name: Restart service entity ID generator container
+  listen: restart backend-entityids-generator
+  docker_container:
+    name: hexaa-service-entityids-generator
+    restart: yes
+
+
+- name: Dummy restart MDX
+  listen: restart mdx
+  debug:
+    msg: This task is only here so that tasks can notify this listener, without error
+  when: no

@@ -52,7 +52,6 @@
       HEXAA_BACKEND_DATABASE_PORT: "{{ HEXAA_BACKEND_DATABASE_PORT }}"
     pull: yes
     restart_policy: "{{ docker_restart_policy }}"
-    restart: yes
 
 
 - name: start ssp-aa container
@@ -71,6 +70,8 @@
       - /opt/simplesamlphp/www
     pull: yes
     restart_policy: "{{ docker_restart_policy }}"
+  notify:
+    - restart mdx
   tags: [ssp]
 
 - name: start hexaa-backend-web

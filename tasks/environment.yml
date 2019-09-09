@@ -15,6 +15,7 @@
   when: HEXAA_BACKEND_MASTERKEY.defaultMasterKey == ""
   shell: "tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=40 count=1 2>/dev/null;echo"
   register: DEFAULT_KEY
+  changed_when: false
 - name: store default master key
   when: HEXAA_BACKEND_MASTERKEY.defaultMasterKey == ""
   set_fact:
@@ -35,12 +36,16 @@
     state: directory
     mode: ugo+rwxt
   register: log_dir
+  notify:
+    - restart backend
 
 - name: create config dir
   file:
     path: "{{ HEXAA_HOST_DIR }}/config/backend"
     state: directory
   register: config_dir
+  notify:
+    - restart backend
   tags: [ssp]
 - name: create site config dir
   file:
@@ -51,6 +56,7 @@
   file:
     path: "{{ config_dir.path }}/00_GENERATED_BY_ANSIBLE"
     state: touch
+  changed_when: false
 
 - name: create parameters.yml from template
   template:
@@ -64,21 +70,23 @@
   copy:
     src: files/hexaa_entityids_dist.yml
     dest: "{{ config_dir.path }}/site/hexaa_entityids.yml"
-    # do not overwrite existing generated list:
-    force: no
-
-- name: set permissions for entity ID list file
-  file:
-    path: "{{ config_dir.path }}/site/hexaa_entityids.yml"
     # it must be writable by the user running the generator script in the
     # container
     mode: o+w
+    # do not overwrite existing generated list:
+    force: no
+  notify:
+    - restart backend
+    - restart backend-entityids-generator
+
 
 - name: copy nginx config
   tags: [web]
   copy:
     src: files/nginx.conf
     dest: "{{ config_dir.path }}/nginx.conf"
+  notify:
+    - restart backend-web
 
 - name: create ssp config directory
   file:
@@ -89,16 +97,22 @@
   template:
     src: simplesamlphp-config.php.j2
     dest: "{{ config_dir.path }}/ssp/config.php"
+  notify:
+    - restart backend-ssp-aa
   tags: [ssp]
 - name: create simplesamlphp-attributeauthority-hosted from template
   template:
     src: simplesamlphp-attributeauthority-hosted.php.j2
     dest: "{{ config_dir.path }}/ssp/attributeauthority-hosted.php"
+  notify:
+    - restart backend-ssp-aa
   tags: [ssp]
 - name: create module_aa config from template
   template:
     src: simplesamlphp-module_aa.php.j2
     dest: "{{ config_dir.path }}/ssp/module_aa.php"
+  notify:
+    - restart backend-ssp-aa
   tags: [ssp]
 
 - name: ensure saml-aa cert exists
@@ -128,7 +142,7 @@
     - not saml_aa_privkey.stat.exists or not saml_aa_cert.stat.exists
     - not HEXAA_GENERATE_SELFSIGNED
 
-- name: Generate an private key for SSP
+- name: Generate a private key for SSP
   openssl_privatekey:
     path: "{{ SSP_CERT_PATH }}/aa.server.key.pem"
     mode: '644'
@@ -142,6 +156,7 @@
     common_name:     "{{ HEXAA_BACKEND_URL_HOST }}"
     basic_constraints: ["CA:TRUE"]
     basic_constraints_critical: true
+    subject_alt_name: "DNS:{{ HEXAA_BACKEND_URL_HOST }}"
     email_address: "root@{{ HEXAA_BACKEND_URL_HOST }}"
     organization_name: "{{ HEXAA_BACKEND_URL_HOST }}"
   when:
@@ -156,6 +171,8 @@
   when:
     - HEXAA_GENERATE_SELFSIGNED
     - not saml_aa_cert.stat.exists
+  notify:
+    - restart backend-ssp-aa
 
 - name: create masterkey hook dir
   file:
