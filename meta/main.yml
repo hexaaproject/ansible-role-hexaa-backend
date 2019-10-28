@@ -1,3 +1,21 @@
 ---
-dependencies: []
+galaxy_info:
+  role_name: hexaa_backend
+  description: Installs and configures HEXAA backend and its dependencies
+  company: MTA SZTAKI
+  author: Péter Tóth
 
+  license: GPLv3
+
+  min_ansible_version: 2.5
+
+dependencies:
+  - name: geerlingguy.docker
+    become: true
+  - name: geerlingguy.pip
+    become: true
+    vars:
+      pip_package: python3-pip
+      pip_install_packages:
+        - name: docker
+        - name: pyopenssl
