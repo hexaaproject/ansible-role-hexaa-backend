@@ -30,14 +30,21 @@
       UPDATE_INTERVAL_MINUTES: "60"
     pull: yes
     restart_policy: "{{ docker_restart_policy }}"
-    restart: yes
   when: (HEXAA_BACKEND_METADATA_SOURCE_URLS != "" and HEXAA_BACKEND_METADATA_SOURCE_URLS is not none)
 
+
+- name: update hexaa-backend image
+  docker_image:
+    name: "{{ docker_image_name_backend }}:{{ docker_image_tag_backend }}"
+    source: pull
+    force_source: yes
+  failed_when: no
 
 - name: start hexaa-backend
   docker_container:
     name: hexaa-backend
     image: "{{ docker_image_name_backend }}:{{ docker_image_tag_backend }}"
+    pull: no
     networks:
       - name: "{{ docker_network_name_backend }}"
     #etc_hosts: "{{ docker_etc_hosts }}"
@@ -50,7 +57,6 @@
     env:
       HEXAA_BACKEND_DATABASE_HOST: "{{ HEXAA_BACKEND_DATABASE_HOST }}"
       HEXAA_BACKEND_DATABASE_PORT: "{{ HEXAA_BACKEND_DATABASE_PORT }}"
-    pull: yes
     restart_policy: "{{ docker_restart_policy }}"
 
 
