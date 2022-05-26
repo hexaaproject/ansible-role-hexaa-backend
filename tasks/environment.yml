@@ -128,42 +128,44 @@
 
 - name: fail saml-aa ssl
   fail:
-    msg: "Fail saml-aa ssl configs see above"
+    msg: "Fail saml-aa ssl configs, see above"
   when:
     - not saml_aa_privkey.stat.exists or not saml_aa_cert.stat.exists
     - not HEXAA_GENERATE_SELFSIGNED
 
-- name: Generate a private key for SSP
-  openssl_privatekey:
-    path: "{{ SSP_CERT_PATH }}/aa.server.key.pem"
-    mode: '644'
-  when:
-    - HEXAA_GENERATE_SELFSIGNED
-    - not saml_aa_privkey.stat.exists
-- name: Generate an OpenSSL Certificate Signing Request
-  openssl_csr:
-    path:            "{{ SSP_CERT_PATH }}/csr.csr"
-    privatekey_path: "{{ SSP_CERT_PATH }}/aa.server.key.pem"
-    common_name:     "{{ HEXAA_BACKEND_URL_HOST }}"
-    basic_constraints: ["CA:TRUE"]
-    basic_constraints_critical: true
-    subject_alt_name: "DNS:{{ HEXAA_BACKEND_URL_HOST }}"
-    email_address: "root@{{ HEXAA_BACKEND_URL_HOST }}"
-    organization_name: "{{ HEXAA_BACKEND_URL_HOST }}"
+- name: Gemerate cert for SSP
+  block:
+    - name: Make sure SSP cert folder exists
+      file:
+        path: "{{ SSP_CERT_PATH }}"
+        state: directory
+    - name: Generate a private key for SSP
+      openssl_privatekey:
+        path: "{{ SSP_CERT_PATH }}/aa.server.key.pem"
+        mode: '644'
+      when:
+    - name: Generate an OpenSSL Certificate Signing Request
+      openssl_csr:
+        path:            "{{ SSP_CERT_PATH }}/csr.csr"
+        privatekey_path: "{{ SSP_CERT_PATH }}/aa.server.key.pem"
+        common_name:     "{{ HEXAA_BACKEND_URL_HOST }}"
+        basic_constraints: ["CA:TRUE"]
+        basic_constraints_critical: true
+        subject_alt_name: "DNS:{{ HEXAA_BACKEND_URL_HOST }}"
+        email_address: "root@{{ HEXAA_BACKEND_URL_HOST }}"
+        organization_name: "{{ HEXAA_BACKEND_URL_HOST }}"
+      when:
+    - name: Generate a Self Signed OpenSSL certificate
+      openssl_certificate:
+        path:            "{{ SSP_CERT_PATH }}/aa.server.cert.pem"
+        privatekey_path: "{{ SSP_CERT_PATH }}/aa.server.key.pem"
+        csr_path:        "{{ SSP_CERT_PATH }}/csr.csr"
+        provider: selfsigned
+      notify:
+        - restart backend-ssp-aa
   when:
     - HEXAA_GENERATE_SELFSIGNED
     - not saml_aa_cert.stat.exists
-- name: Generate a Self Signed OpenSSL certificate
-  openssl_certificate:
-    path:            "{{ SSP_CERT_PATH }}/aa.server.cert.pem"
-    privatekey_path: "{{ SSP_CERT_PATH }}/aa.server.key.pem"
-    csr_path:        "{{ SSP_CERT_PATH }}/csr.csr"
-    provider: selfsigned
-  when:
-    - HEXAA_GENERATE_SELFSIGNED
-    - not saml_aa_cert.stat.exists
-  notify:
-    - restart backend-ssp-aa
 
 - name: create masterkey hook dir
   file:

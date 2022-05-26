@@ -1,12 +1,12 @@
 ---
 - name: include environment
-  include: environment.yml
+  include_tasks: environment.yml
   tags: [backend]
 
 - name: include database
-  include: database.yml
+  include_tasks: database.yml
   tags: [backend]
 
 - name: include hexaa-backend
-  include: hexaa-backend.yml
+  include_tasks: hexaa-backend.yml
   tags: [backend]
